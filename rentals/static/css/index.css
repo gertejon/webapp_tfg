@@ -1,0 +1,10 @@
+#welcome_message {
+    position: absolute;
+    top: 100px;
+    left: 15px;
+  }
+
+#welcome_message h1 {
+    color: white;
+    font-size: 70px;;
+  }
