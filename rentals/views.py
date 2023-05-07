@@ -21,11 +21,21 @@ def categories(request):
 def signup(request):
     form = SignUpForm(request.POST)
     if form.is_valid():
-        form.save()
+        # save user and create profile
+        user = form.save()
+        profile = Profile.objects.create(user=user)
+        # set profile values
+        profile.username = form.cleaned_data.get('username')
+        # profile.image = form.cleaned_data.get('image')
+        # save profile changes
+        profile.save()
+        # authenticate and log user
         username = form.cleaned_data.get('username')
         password = form.cleaned_data.get('password1')
-        #user.profile.image = form.cleaned_data.get('image')
+        user.profile.image = form.cleaned_data.get('image')
         user = authenticate(username=username, password=password)
         login(request, user)
+
         return redirect('home')
+    
     return render(request, 'rentals/registration/signup.html', {'form': form})
