@@ -1,12 +1,10 @@
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.forms import UserChangeForm
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from .forms import SignUpForm
-
-# Create your views here.
-
 
 
 def home(request):
@@ -31,3 +29,14 @@ def signup(request):
     else:
         form = SignUpForm()
     return render(request, 'rentals/registration/signup.html', {'form': form})
+
+@login_required
+def account(request):
+    if request.method == 'POST':
+        form = UserChangeForm(request.POST, instance=request.user)
+        if form.is_valid():
+            form.save()
+            return redirect('account')
+    else:
+        form = UserChangeForm(instance=request.user)
+    return render(request, 'rentals/account.html', {'form': form, 'user': request.user})
