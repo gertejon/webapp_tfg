@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
-from profiles.forms import SignUpForm
+from .forms import SignUpForm
 
 # Create your views here.
 
@@ -19,23 +19,15 @@ def categories(request):
     return render(request, 'rentals/categories.html')
 
 def signup(request):
-    form = SignUpForm(request.POST)
-    if form.is_valid():
-        # save user and create profile
-        user = form.save()
-        profile = Profile.objects.create(user=user)
-        # set profile values
-        profile.username = form.cleaned_data.get('username')
-        # profile.image = form.cleaned_data.get('image')
-        # save profile changes
-        profile.save()
-        # authenticate and log user
-        username = form.cleaned_data.get('username')
-        password = form.cleaned_data.get('password1')
-        user.profile.image = form.cleaned_data.get('image')
-        user = authenticate(username=username, password=password)
-        login(request, user)
-
-        return redirect('home')
-    
+    if request.method == 'POST':
+        form = SignUpForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            username = form.cleaned_data.get('username')
+            password = form.cleaned_data.get('password1')
+            user = authenticate(username=username, password=password)
+            login(request, user)
+            return redirect('home')
+    else:
+        form = SignUpForm()
     return render(request, 'rentals/registration/signup.html', {'form': form})
