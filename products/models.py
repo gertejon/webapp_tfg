@@ -6,9 +6,11 @@ class Product(models.Model):
     id = models.IntegerField(primary_key=True)
     name = models.CharField(max_length=100)
     category = models.CharField(max_length=100, default='')
-    prod_type = models.CharField(max_length=100, default='')
+    product_type = models.CharField(max_length=100, default='')
+    manufacturer = models.CharField(max_length=100, default='')
+    quality = models.CharField(max_length=100, default='')
     price = models.FloatField()
-    stock = models.JSONField()
+    #stock = models.JSONField()
     specs = ArrayField(
         models.CharField(max_length=255),
         default=list,
