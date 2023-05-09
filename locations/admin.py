@@ -1,5 +1,13 @@
 from django.contrib import admin
 from .models import Location, Stock
 
-admin.site.register(Location)
-admin.site.register(Stock)
+
+class StockInline(admin.TabularInline):
+    model = Stock
+    extra = 1
+
+class LocationAdmin(admin.ModelAdmin):
+    inlines = [StockInline]
+
+admin.site.register(Location, LocationAdmin)
+# admin.site.register(Stock)
