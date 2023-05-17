@@ -11,4 +11,6 @@ urlpatterns = [
     path('logout',LogoutView.as_view(),name="logout"),
     path('signup/', views.signup, name="signup"),
     path('account/', views.account, name='account'),
+    path('types/<str:category_name>/', views.types, name='types'),
+    path('instruments/<str:type_name>/', views.instruments, name='instruments'),
 ]

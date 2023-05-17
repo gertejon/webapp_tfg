@@ -1,0 +1,97 @@
+{% extends 'rentals/base.html' %}
+
+
+{% block content %}
+<div class="container custom-size">
+  <!-- TITLE -->
+  <div class="row">
+    <div class="col">
+      <h1>{{ type }}</h1>
+    </div>
+  </div>
+  <!-- FILTERS -->
+  <div class="row">
+    <div class="col-2">
+      <form id="instrumentFilter">
+        <h3>Filters</h3>
+        <div class="form-group filter-field">
+          <label for="quality-filter"><h5>Quality</h5></label>
+          <select class="form-control" id="quality" name="quality">
+            <option value="">All</option>
+            {% for quality in qualities %}
+            <option value="{{ quality }}">{{ quality }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="form-group filter-field">
+          <label for="brand-filter"><h5>Brand</h5></label>
+          <select class="form-control" id="brand" name="brand">
+            <option value="">All</option>
+            {% for brand in brands %}
+            <option value="{{ brand }}">{{ brand }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <br/>
+        <button type="submit" class="btn btn-outline-dark">Apply</button>
+      </form>
+    </div>
+    <!-- INSTRUMENTS -->
+    <div class="col-8">
+      <div class="row categories">
+        {% for instrument in instruments %}
+            <div class="col">
+                <div class="card" style="width: 18rem;">
+                    <img src="{{ instrument.image.url }}" class="card-img-top" alt="{{ instrument.name }}">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">{{ instrument.name }}</h5>
+                        {% for spec in instrument.specs %}
+                          <p class="card-text">{{ spec }}</p>
+                        {% endfor %}
+                        <a href="#" class="btn btn-outline-dark w-100">Rent for {{ instrument.price }}€/day</a>
+                    </div>
+                </div>
+            </div>
+            
+        {% endfor %}
+      </div>
+    </div>
+    <!-- SORTING BOX -->
+    <div class="col-2">
+      <h3>Sorting box</h3>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+
+{% block 'scripts' %} 
+  <!-- FILTER SCRIPT -->
+  <script>
+    $(document).ready(function() {
+    $('#instrumentFilter').on('submit', function(e) {
+      e.preventDefault();
+      var quality = $('#quality').val();
+      var brand = $('#brand').val();
+
+      // getting url parameter "type" to make GET request
+      var type_name = window.location.pathname.split('/').pop();
+
+      $.ajax({
+        url: '/instruments/' + type_name + '/',
+        method: 'GET',
+        data: {
+          quality: quality,
+          brand: brand
+        },
+        success: function(data) {
+          $('#product-results').html(data);
+        },
+        error: function(xhr, textStatus, errorThrown) {
+          console.error(errorThrown);
+        }
+      });
+    });
+  });
+  </script>
+{% endblock %}

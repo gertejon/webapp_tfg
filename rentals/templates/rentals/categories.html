@@ -1,15 +1,29 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Proyecto en desarrollo</title>
-    <!-- Enlace a Bootstrap CSS -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
-</head>
-<body>
-    <div class="container">
-        <h1>Proyecto en desarrollo</h1>
-        <p>¡Gracias por visitar nuestra página de proyecto en desarrollo!</p>
-        <p>Estamos trabajando arduamente para crear algo increíble y emocionante. Por favor, mantente atento para futuras actualizaciones.</p>
+{% extends 'rentals/base.html' %}
+
+{% block content %}
+
+
+<div class="row categories">
+{% for category in categories %}
+    <div class="col">
+        <div class="card" style="width: 18rem;">
+            <img src="{{ category.image.url }}" class="card-img-top" alt="{{ category.name }}">
+            <div class="card-body text-center">
+            <a href="{% url 'types' category.name %}" class="btn btn-outline-dark btn-lg w-100">{{ category.name }}</a>
+            </div>
+        </div>
     </div>
-</body>
-</html>
+    
+{% endfor %}
+
+<div class="col">
+    <div class="card" style="width: 18rem;">
+        <img src="#" class="card-img-top" alt="All categories">
+        <div class="card-body text-center">
+        <a href="{% url 'instruments' 'All instruments' %}" class="btn btn-outline-dark btn-lg w-100">All instruments</a>
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}

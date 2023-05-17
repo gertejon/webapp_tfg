@@ -41,7 +41,9 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'products',
     'locations',
-    
+    'categories',
+    'product_types',
+    'brands',
 ]
 
 MIDDLEWARE = [
@@ -142,3 +144,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 LOGIN_REDIRECT_URL = '/'
 AUTH_USER_MODEL = 'auth.User'
+
+
+MEDIA_URL = ''
+MEDIA_ROOT = os.path.join(BASE_DIR, '')

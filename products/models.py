@@ -1,27 +1,31 @@
 from django.db import models
 from django.contrib.postgres.fields import ArrayField
+from categories.models import Category
+from product_types.models import Product_Type
+from brands.models import Brand
 
 
 class Product(models.Model):
-    id = models.IntegerField(primary_key=True)
-    name = models.CharField(max_length=100)
-    category = models.CharField(max_length=100, default='')
-    product_type = models.CharField(max_length=100, default='')
-    manufacturer = models.CharField(max_length=100, default='')
-    quality = models.CharField(max_length=100, default='')
-    price = models.FloatField()
-    #stock = models.JSONField()
+    QUALITY_CHOICES = (
+    ("HIGH-END", "High-end"),
+    ("MID-RANGE", "Mid-range"),
+    ("BUDGET", "Affordable"),
+    )
+
+    name = models.CharField(max_length=100, unique=True)
+    category = models.ForeignKey(Category, null=True, blank=True, on_delete=models.CASCADE)
+    product_type = models.ForeignKey(Product_Type, null=True, blank=True, on_delete=models.CASCADE)
+    brand = models.ForeignKey(Brand, null=True, blank=True, on_delete=models.CASCADE)
+    quality = models.CharField(max_length=10, choices=QUALITY_CHOICES, default='Mid-range')
+    price = models.FloatField(null=True)
     specs = ArrayField(
         models.CharField(max_length=255),
         default=list,
     )
-    accessories_id = ArrayField(
-        models.IntegerField(),
-        default=list,
-    )
-    instrument = models.BooleanField(default=True)
+    accessories = models.ManyToManyField('self', blank=True, symmetrical=False)
+    is_accessory = models.BooleanField(default=False)
     active = models.BooleanField(default=True)
-    image = models.ImageField(upload_to='product_images/')
+    image = models.ImageField(null=True, blank=True, upload_to='product_images/')
 
     def __str__(self):
-            return self.name
+        return self.name

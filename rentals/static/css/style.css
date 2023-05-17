@@ -1,0 +1,16 @@
+.categories {
+    padding-left: 100px;
+    padding-top: 50px;
+}
+
+.custom-size {
+    max-width: 1700px; 
+    margin-left: auto;
+    margin-right: auto;
+    padding-top: 20px;
+}
+
+.filter-field {
+    padding-top: 20px;
+}
+
