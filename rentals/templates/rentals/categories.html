@@ -2,28 +2,41 @@
 
 {% block content %}
 
-
-<div class="row categories">
-{% for category in categories %}
-    <div class="col">
-        <div class="card" style="width: 18rem;">
-            <img src="{{ category.image.url }}" class="card-img-top" alt="{{ category.name }}">
-            <div class="card-body text-center">
-            <a href="{% url 'types' category.name %}" class="btn btn-outline-dark btn-lg w-100">{{ category.name }}</a>
-            </div>
+<div class="container custom-size">
+    <div class="row">
+        <div class="col">
+            <h1>Categories</h1>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <div class="row categories">
+                {% for category in categories %}
+                    <div class="col">
+                        <div class="card" style="width: 18rem;">
+                            <img src="{{ category.image.url }}" class="card-img-top" alt="{{ category.name }}">
+                            <div class="card-body text-center">
+                            <a href="{% url 'types' category.name %}" class="btn btn-outline-dark btn-lg w-100">{{ category.name }}</a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                {% endfor %}
+                
+                <div class="col">
+                    <div class="card" style="width: 18rem;">
+                        {% load static %}
+                        <img src="{% static '/assets/img/all_instruments.jpg' %}" class="card-img-top" alt="All instruments">
+                        <div class="card-body text-center">
+                        <a href="{% url 'instruments' 'All instruments' %}" class="btn btn-outline-dark btn-lg w-100">All instruments</a>
+                        </div>
+                    </div>
+                </div>
         </div>
     </div>
     
-{% endfor %}
-
-<div class="col">
-    <div class="card" style="width: 18rem;">
-        <img src="#" class="card-img-top" alt="All categories">
-        <div class="card-body text-center">
-        <a href="{% url 'instruments' 'All instruments' %}" class="btn btn-outline-dark btn-lg w-100">All instruments</a>
-        </div>
-    </div>
 </div>
+
 
 
 {% endblock %}

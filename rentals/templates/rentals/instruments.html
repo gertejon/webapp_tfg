@@ -2,7 +2,7 @@
 
 
 {% block content %}
-<div class="container custom-size">
+<div class="custom-size container">
   <!-- TITLE -->
   <div class="row">
     <div class="col">
@@ -32,6 +32,14 @@
             {% endfor %}
           </select>
         </div>
+        <div class="form-group filter-field">
+          <label for="min-price-filter"><h5>Min Price</h5></label>
+          <input type="number" class="form-control" id="min-price-filter" name="min-price-filter" placeholder="Enter price">
+        </div>
+        <div class="form-group filter-field">
+          <label for="max-price-filter"><h5>Max Price</h5></label>
+          <input type="number" class="form-control" id="max-price-filter" name="max-price-filter" placeholder="Enter price">
+        </div>
         <br/>
         <button type="submit" class="btn btn-outline-dark">Apply</button>
       </form>
@@ -48,7 +56,7 @@
                         {% for spec in instrument.specs %}
                           <p class="card-text">{{ spec }}</p>
                         {% endfor %}
-                        <a href="#" class="btn btn-outline-dark w-100">Rent for {{ instrument.price }}€/day</a>
+                        <a href="{% url 'rent' instrument.name %}" class="btn btn-outline-dark w-100">Rent for {{ instrument.price }}€/day</a>
                     </div>
                 </div>
             </div>
@@ -58,7 +66,15 @@
     </div>
     <!-- SORTING BOX -->
     <div class="col-2">
-      <h3>Sorting box</h3>
+      <h3>Sort Products</h3>
+      <form id="sort-form" method="GET" action="">
+        <div class="form-group paddingTop">
+          <div class="btn-group" role="group" aria-label="Sort products">
+            <button type="submit" class="btn btn-outline-dark" name="sort" value="AZ">A-Z</button>
+            <button type="submit" class="btn btn-outline-dark" name="sort" value="ZA">Z-A</button>
+          </div>
+        </div>
+      </form>
     </div>
   </div>
 </div>
@@ -69,10 +85,12 @@
   <!-- FILTER SCRIPT -->
   <script>
     $(document).ready(function() {
-    $('#instrumentFilter').on('submit', function(e) {
-      e.preventDefault();
+    $('#instrumentFilter').on('submit', function(filter) {
+      filter.preventDefault();
       var quality = $('#quality').val();
       var brand = $('#brand').val();
+      var min_price = $('#min-price-filter').val();
+      var max_price = $('#max-price-filter').val();
 
       // getting url parameter "type" to make GET request
       var type_name = window.location.pathname.split('/').pop();
@@ -82,7 +100,9 @@
         method: 'GET',
         data: {
           quality: quality,
-          brand: brand
+          brand: brand,
+          min_price: min_price,
+          max_price: max_price
         },
         success: function(data) {
           $('#product-results').html(data);

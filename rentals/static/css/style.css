@@ -14,3 +14,26 @@
     padding-top: 20px;
 }
 
+#welcome_message {
+    position: absolute;
+    top: 100px;
+    left: 15px;
+}
+
+#welcome_message h1 {
+    color: white;
+    font-size: 70px;
+}
+
+.bar-user-message {
+    color: white;
+    padding-right: 10px;
+}
+
+.paddingTop {
+    padding-top: 20px;
+}
+
+.padding40 {
+    padding-top: 40px;
+}

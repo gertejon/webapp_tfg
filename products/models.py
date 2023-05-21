@@ -7,9 +7,9 @@ from brands.models import Brand
 
 class Product(models.Model):
     QUALITY_CHOICES = (
-    ("HIGH-END", "High-end"),
-    ("MID-RANGE", "Mid-range"),
-    ("BUDGET", "Affordable"),
+        ("HIGH-END", "High-end"),
+        ("MID-RANGE", "Mid-range"),
+        ("BUDGET", "Affordable"),
     )
 
     name = models.CharField(max_length=100, unique=True)
