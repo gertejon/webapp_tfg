@@ -2,15 +2,6 @@
 
 {% block content %}
 
-<!-- --------------------- IN PROCESS PROMPT ---------------------- -->
-<!-- <div class="container">
-<h1>Página en Proceso</h1>
-<div class="alert alert-warning" role="alert">
-    Esta página está en proceso y estará disponible próximamente.
-</div>
-</div>
-<hr> -->
-<!-- -------------------------------------------------------------- -->
 
 <div class="container custom-size">
     
@@ -45,12 +36,12 @@
             <p class="text-danger paddingTop">This instrument is not available to rent in any location</p>
             {% else %}
             <form method="GET" action="{% url 'locations' instrument.first.name %}">
-                {% csrf_token %}
+                <!-- {% csrf_token %}
                 <div class="row paddingTop">
                     <div class="col-5">
                         <h5>Pick-up date</h5>
                         <div class="input-group date" id="datepicker1">
-                            <input type="text" class="form-control" name="pickup_date">
+                            <input type="text" class="form-control" id="pickup-date" name="pickup_date">
                             <span class="input-group-append">
                                 <span class="input-group-text bg-white">
                                     <i class="fa fa-calendar"></i>
@@ -62,7 +53,7 @@
                     <div class="col-5" >
                         <h5>Return date</h5>
                         <div class="input-group date" id="datepicker2">
-                            <input type="text" class="form-control" name="return_date">
+                            <input type="text" class="form-control" id="return-date" name="return_date">
                             <span class="input-group-append">
                                 <span class="input-group-text bg-white">
                                     <i class="fa fa-calendar"></i>
@@ -72,7 +63,36 @@
                     </div>
                 </div>
                 <div class="row padding40">
-                    <button type="submit" class="btn btn-outline-dark btn-lg">View location</button>
+                    <button type="submit" class="btn btn-outline-dark btn-lg" onclick="return validateForm()">View location</button>
+                </div> -->
+                {% csrf_token %}
+                <div class="row paddingTop">
+                    <div class="col-5">
+                        <h5>Pick-up date</h5>
+                        <div class="input-group date" id="datepicker1">
+                            <input type="text" class="form-control" id="pickup_date" name="pickup_date">
+                            <span class="input-group-append">
+                                <span class="input-group-text bg-white">
+                                    <i class="fa fa-calendar"></i>
+                                </span>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="col-2"></div>
+                    <div class="col-5" >
+                        <h5>Return date</h5>
+                        <div class="input-group date" id="datepicker2">
+                            <input type="text" class="form-control" id="return_date" name="return_date">
+                            <span class="input-group-append">
+                                <span class="input-group-text bg-white">
+                                    <i class="fa fa-calendar"></i>
+                                </span>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row padding40">
+                    <button type="submit" class="btn btn-outline-dark btn-lg" onclick="return dateValidation()">View location</button>
                 </div>
             </form>
             {% endif %}
@@ -87,5 +107,34 @@
     });
 </script>
 
+<script type="text/javascript">
+    function dateValidation() {
+        // validate pickup date
+        var pickup_date_str = document.getElementById('pickup_date').value;
+        var pickup_date_mdy = pickup_date_str.split('/');
+        var pickup_date = new Date(pickup_date_mdy[2], pickup_date_mdy[0], pickup_date_mdy[1]);
+        // validate return date
+        var return_date_str = document.getElementById('return_date').value;
+        var return_date_mdy = return_date_str.split('/');
+        var return_date = new Date(return_date_mdy[2], return_date_mdy[0], return_date_mdy[1]);
+
+        if (return_date <= pickup_date) {
+            alert('Pick-up date cannot be greater than return date. Please, select dates again.');
+            return false;
+        }
+        // validate dates are not in the past
+        var current_date = new Date();
+        var current_year = current_date.getFullYear();
+        var current_month = current_date.getMonth();
+        var current_day = current_date.getDate();
+        var current_date_formatted = newDate(current_month, current_day, current_year)
+        if (current_date_formatted > pickup_date) {
+            alert('Dates cannot take place in the past. Please, select dates again.');
+            return false;
+        }
+
+        return true;
+    }
+</script>
 
 {% endblock %}

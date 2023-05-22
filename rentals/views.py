@@ -9,7 +9,12 @@ from categories.models import Category
 from product_types.models import Product_Type
 from products.models import Product
 from locations.models import Location
+from locations.models import Stock
+from payment_methods.models import PaymentMethod
+from orders.models import Order
+from orders.models import OrderProduct
 from urllib.parse import unquote
+from datetime import datetime
 
 
 ########################################################### Web content views ###########################################################
@@ -52,7 +57,7 @@ def instruments(request, type_name):
     min_price = request.GET.get('min-price-filter')
     max_price = request.GET.get('max-price-filter')
     sort = request.GET.get('sort')
-    # applying filters
+    # applying filters if requested
     if quality:
         instruments = instruments.filter(quality=quality)
     if brand:
@@ -83,6 +88,7 @@ def rent(request, instrument_name):
 
     return render(request, 'rentals/rent.html', {'instrument': instrument, 'pickup_locations': pickup_locations})
 
+@login_required
 def locations(request, instrument_name):
     # getting dates from URL
     pickup_date = request.GET.get('pickup_date')
@@ -104,15 +110,16 @@ def locations(request, instrument_name):
         'return_date': return_date,
     })
 
+@login_required
 def accessories(request, instrument_name):
     # getting instrument to render template
     instrument = Product.objects.filter(name=instrument_name)
     # getting dates and locations from URL
-    pickup_date = request.GET.get('pickup_date')
-    return_date = request.GET.get('return_date')
+    pickup_date = request.session['pickup_date']
+    return_date = request.session['return_date']
     pickup_loc = request.GET.get('pickup_loc')
     return_loc = request.GET.get('return_loc')
-    # saving loactions in session
+    # saving locations in session
     request.session['pickup_loc'] = pickup_loc
     request.session['return_loc'] = return_loc
     # getting instrument accessories
@@ -128,6 +135,132 @@ def accessories(request, instrument_name):
         'accessories': accessories,
     })
 
+@login_required
+def payment(request, instrument_name):
+    # getting instrument and payment methods to render template
+    instrument = Product.objects.filter(name=instrument_name)
+    payment_methods = PaymentMethod.objects.all()
+    # getting dates, locations and accessories from URL
+    pickup_date = request.session['pickup_date']
+    return_date = request.session['return_date']
+    pickup_loc = request.session['pickup_loc']
+    return_loc = request.session['return_loc']
+    accessories = request.GET.getlist('accessories')
+    # saving accessories in session
+    request.session['accessories'] = accessories
+
+    return render(request, 'rentals/payment.html', {
+        'instrument': instrument,
+        'payment_methods': payment_methods,
+        'pickup_date': pickup_date,
+        'return_date': return_date, 
+        'pickup_loc': pickup_loc,
+        'return_loc': return_loc,
+        'accessories': accessories,
+    })
+
+@login_required
+def overview(request, instrument_name):
+    # getting instrument to render template
+    instrument = Product.objects.filter(name=instrument_name)
+    # getting dates, locations, accessories and payment method from URL
+    pickup_date = request.session['pickup_date']
+    return_date = request.session['return_date']
+    pickup_loc = request.session['pickup_loc']
+    return_loc = request.session['return_loc']
+    accessories = request.session['accessories']
+    payment_method = request.GET.get('payment_method')
+    # saving payment method in session
+    request.session['payment_method'] = payment_method
+
+    date1 = datetime.strptime(pickup_date, "%m/%d/%Y").date()
+    date2 = datetime.strptime(return_date, "%m/%d/%Y").date()
+    Ndays = date2 - date1
+    days = Ndays.days
+    instrumentObj = Product.objects.get(name=instrument_name)
+    instrumentPrice = days * instrumentObj.price
+
+    accessory_list = []
+    accessories_price = 0.0
+    for accessory_name in accessories:
+        acc = Product.objects.get(name=accessory_name)
+        accessory_list.append(acc)
+        accessories_price = accessories_price + acc.price
+    totalPrice = instrumentPrice + accessories_price
+    request.session['totalPrice'] = totalPrice
+
+    return render(request, 'rentals/overview.html', {
+        'instrument': instrument,
+        'pickup_date': pickup_date,
+        'return_date': return_date, 
+        'pickup_loc': pickup_loc,
+        'return_loc': return_loc,
+        'accessory_list': accessory_list,
+        'payment_method': payment_method,
+        'days': days,
+        'instrumentPrice': instrumentPrice,
+        'totalPrice': totalPrice,
+    })
+
+@login_required
+def confirmation(request, instrument_name):
+    
+    # page was refreshed and order is already processed
+    if not request.session.get('pickup_date'):
+        return render(request, 'rentals/index.html')
+    
+    # creating order
+    pickup_date = request.session['pickup_date']
+    return_date = request.session['return_date']
+    order_pickup_date = datetime.strptime(pickup_date, "%m/%d/%Y").date()
+    order_return_date = datetime.strptime(return_date, "%m/%d/%Y").date()
+    pickup_loc = Location.objects.get(name=request.session['pickup_loc'])
+    return_loc = Location.objects.get(name=request.session['return_loc'])
+    pay_method = PaymentMethod.objects.get(name=request.session['payment_method'])
+    new_order = Order(
+        user = request.user,
+        total_price = request.session['totalPrice'],
+        pickup_date = order_pickup_date,
+        return_date = order_return_date,
+        pickup_location = pickup_loc,
+        return_location = return_loc,
+        payment_method = pay_method,
+    )
+
+    # save order (products will be added after saving)
+    new_order.save()
+
+    # getting accessories from session
+    accessories = request.session['accessories']
+    accessory_list = []
+    for accessory_name in accessories:
+        acc = Product.objects.get(name=accessory_name)
+        accessory_list.append(acc)
+    # getting instrument object
+    instrument = Product.objects.get(name=instrument_name)
+    # adding products to order (instruments + accessories) (Through OrderProduct)
+    orderproduct = OrderProduct(order = new_order, product = instrument) # instrument
+    orderproduct.save()
+    for accessory in accessory_list:
+        orderproduct = OrderProduct(order = new_order, product = accessory)
+        orderproduct.save()
+
+    # stock update
+    # stock = Stock.objects.get(location=pickup_loc, product=instrument)
+    # stock.units = stock.units - 1
+    # stock.save()
+    
+    del request.session['pickup_date']
+    del request.session['return_date']
+    del request.session['pickup_loc']
+    del request.session['return_loc']
+    del request.session['accessories']
+    del request.session['totalPrice']
+    del request.session['payment_method']
+
+    return render(request, 'rentals/confirmation.html', {
+        'order': new_order,
+    })
 
 
 ########################################################### user management views #######################################################
@@ -155,3 +288,48 @@ def account(request):
     else:
         form = UserChangeForm(instance=request.user)
     return render(request, 'rentals/account.html', {'form': form, 'user': request.user})
+
+@login_required
+def orders(request):
+    user_orders = Order.objects.filter(user=request.user.id)
+    orderProducts = OrderProduct.objects.all()
+    orders_id = []
+    for order in user_orders:
+        orders_id.append(order.id)
+    return render(request, 'rentals/orders.html', {
+        'user_orders': user_orders,
+        'orders_id': orders_id,
+        'orderProducts': orderProducts,
+
+    })
+
+def order_detail(request, order_id):
+    order = Order.objects.get(id=order_id)
+    orderProducts = OrderProduct.objects.all()
+    accessory_list = []
+    accessories_price = 0
+
+
+    for op in orderProducts:
+        if op.order == order:
+            if op.product.is_accessory == False:
+                instrument = op.product
+                instrument_price = op.product.price
+            else:
+                accessory_list.append(op.product)
+                accessories_price = accessories_price + op.product.price
+
+    Ndays = order.return_date - order.pickup_date
+    days = Ndays.days
+    instrument_total_price = instrument_price * days
+    totalPrice = instrument_total_price + accessories_price
+
+
+    return render(request, 'rentals/order_detail.html', {
+        'order': order,
+        'instrument': instrument,
+        'accessory_list': accessory_list,
+        'totalPrice': totalPrice,
+        'instrument_total_price': instrument_total_price,
+        'days': days,
+    })

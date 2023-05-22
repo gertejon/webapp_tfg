@@ -44,6 +44,8 @@ INSTALLED_APPS = [
     'categories',
     'product_types',
     'brands',
+    'orders',
+    'payment_methods',
     'bootstrap_datepicker_plus',
 ]
 

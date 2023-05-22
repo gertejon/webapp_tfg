@@ -1,0 +1,32 @@
+{% extends 'rentals/base.html' %}
+
+{% block content %}
+
+
+<div class="container">
+    <div class="row">
+        <h1>Thanks for your order, {{ user.username }}</h1>
+    </div>
+    <div class="row">
+        <h3 class="paddingTop">
+            Order ID: {{ order.id }}
+        </h3>
+        {% if order.payment_method != "CASH" %}
+        <p>
+            Your payment concept must be: 
+            <span class="font-weight-bold">{{ user.username }}_order{{ order.id }}</span>
+        </p>
+        
+        {% endif %}
+    </div>
+    <div class="row padding40">
+        <div class="col text-center">
+            <a href="{% url 'home' %}" class="btn btn-outline-dark btn-lg">Back to homepage</a>
+        </div>
+        <dic class="col text-center">
+            <a href="{% url 'order_detail' order.id %}" class="btn btn-outline-dark btn-lg">View order</a>
+        </dic>
+    </div>
+</div>
+
+{% endblock %}

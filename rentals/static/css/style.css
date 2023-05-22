@@ -34,6 +34,14 @@
     padding-top: 20px;
 }
 
+.paddingBot {
+    padding-bottom: 20px;
+}
+
 .padding40 {
     padding-top: 40px;
+}
+
+.payment-message{
+    font-size: 15px;
 }

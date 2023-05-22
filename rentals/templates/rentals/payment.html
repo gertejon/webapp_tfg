@@ -2,15 +2,7 @@
 
 {% block content %}
 
-<!-- --------------------- IN PROCESS PROMPT ---------------------- -->
-<!-- <div class="container">
-<h1>Página en Proceso</h1>
-<div class="alert alert-warning" role="alert">
-    Esta página está en proceso y estará disponible próximamente.
-</div>
-</div>
-<hr> -->
-<!-- -------------------------------------------------------------- -->
+
 
 <div class="container custom-size">
     
@@ -46,36 +38,40 @@
                             <li class="list-group-item">Pick-up location: {{ pickup_loc }}</li>
                             <li class="list-group-item">Return location: {{ return_loc }}</li>
                     </ul>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item font-weight-bold">Accessories</li>
+                        {% for accessory in accessories %}
+                            <li class="list-group-item">{{ accessory }}</li>
+                        {% endfor %}
+                    </ul>
                 </ul>
             </div>
         </div>
         <div class="col-1"></div>
         <div class="col-7 paddingTop">
             <div class="progress">
-                <div class="progress-bar" role="progressbar" style="width: 60%;" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100">3/5</div>
+                <div class="progress-bar" role="progressbar" style="width: 80%;" aria-valuenow="80" aria-valuemin="0" aria-valuemax="100">4/5</div>
             </div>
-            <h1 class="padding40">Add Accessories</h1>
-            <form method="GET" action="{% url 'payment' instrument.first.name %}">
+            <h1 class="padding40">Add Payment Method</h1>
+            <p class="paddingTop paddingBot">Once payment has been made and checked by a staff member, your order's status will be setted to "payed".</p>
+            {% for pm in payment_methods %}
+            <form method="GET" action="{% url 'overview' instrument.first.name %}">
                 {% csrf_token %}
-                {% if accessories %}
-                {% for accessory in accessories %}
-                <div class="form-check paddingTop">
-                    <input class="form-check-input" type="checkbox" name="accessories" value="{{ accessory.name }}" id="accessory_{{ accessory.id }}">
-                    <label class="form-check-label" for="accessory_{{ accessory.first.id }}">
-                        {{ accessory.name }} +{{ accessory.price }}€
-                    </label>
-                </div>
-                {% endfor %}
-                {% else %}
-                <p class="text-danger paddingTop">There are no accessories for this instrument.</p>
-                {% endif %}
-                <div class="row padding40">
-                    <button type="submit" class="btn btn-outline-dark btn-lg">Select payment method</button>
-                </div>
+                <div class="card">
+                    <div class="card-body">
+                      <h5 class="card-title">{{ pm.name }}</h5>
+                      <p class="card-text">{{ pm.instructions }}</p>
+                      <input type="hidden" name="payment_method" value="{{ pm.name }}">
+                      <button type="submit" class="btn btn-outline-dark">Select payment method</button>
+                    </div>
+                  </div>
             </form>
-            
+            {% endfor %}
         </div>
     </div>
 </div>
+
+
+
 
 {% endblock %}

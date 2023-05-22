@@ -1,0 +1,121 @@
+{% extends 'rentals/base.html' %}
+
+{% block content %}
+
+
+<div class="container">
+    <div class="row paddingTop">
+        <h1>Order {{ order.id }} - {{ instrument.name }}</h1>
+    </div>
+    <div class="row paddingTop">
+        <div class="row" >
+            <div class="col-4">
+                <div class="row border">
+                    <h1>{{ instrument.first.name }}</h1>
+                    <div class="col paddingTop"> 
+                        <div class="card border-0" style="width: 9rem;">
+                            <img src="{{ instrument.image.url }}" class="card-img-top" alt="{{ instrument.name }}">
+                        </div>
+                    </div>
+                    <div class="col paddingTop">
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item font-weight-bold">Specs</li>
+                            {% for spec in instrument.specs %}
+                                <li class="list-group-item">{{ spec }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="col-1"></div>
+            <div class="col-7 paddingTop">
+                <h1 class="paddingTop">Overview</h1>
+                <div class="row">
+                    <div class="col">
+                        <ul class="list-group list-group-flush">
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item font-weight-bold">Dates</li>
+                                    <li class="list-group-item">Pick-up Date: {{ order.pickup_date }}</li>
+                                    <li class="list-group-item">Return Date: {{ order.return_date }}</li>
+                            </ul>
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item font-weight-bold">Locations</li>
+                                    <li class="list-group-item">Pick-up location: {{ order.pickup_location }}</li>
+                                    <li class="list-group-item">Return location: {{ order.return_location }}</li>
+                            </ul>
+                        </ul>
+                    </div>
+                    <div class="col">
+                        <ul class="list-group list-group-flush">
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item font-weight-bold">Payment method*</li>
+                                    <li class="list-group-item">{{ order.payment_method }}</li>
+                            </ul>
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item font-weight-bold">Order status</li>
+                                    <li class="list-group-item">{{ order.order_status }}</li>
+                            </ul>
+                        </ul>
+                        <div class="payment-message paddingTop">
+                            <p>*Transfer and Bizum payment concept must contain user name followed by order ID.</p>
+                            <p>Payment concept for this order: 
+                                <span class="font-weight-bold">
+                                    {{ user.username }}_{{ order.id }}
+                                </span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                    <div class="row paddingTop">
+                        <div class="col">
+                            <ul class="list-group list-group-flush">
+                                <ul class="list-group list-group-flush">
+                                    <li class="list-group-item font-weight-bold">Products</li>
+                                    <li class="list-group-item"> 
+                                        <div class="d-flex justify-content-between">
+                                            <div class="text-left">
+                                                {{ instrument.name }}
+                                            </div>
+                                            <div class="text-right">
+                                                {{ instrument.price }}€ x {{ days }} days: {{ instrument_total_price }}€
+                                            </div>
+                                        </div>
+                                    </li>
+                                    {% for accessory in accessory_list %}
+                                    <li class="list-group-item">
+                                        <div class="d-flex justify-content-between">
+                                            <div class="text-left">
+                                                {{ accessory.name }}
+                                            </div>
+                                            <div class="text-right">
+                                                {{ accessory.price }}€
+                                            </div>
+                                        </div>
+                                    </li> 
+                                    {% endfor %}
+                                    <li class="list-group-item">
+                                        <div class="d-flex justify-content-between">
+                                            <div class="text-left font-weight-bold">
+                                                Total:
+                                            </div>
+                                            <div class="text-right font-weight-bold">
+                                                {{ totalPrice }}€
+                                            </div>
+                                        </div>
+                                    </li> 
+                                    
+                                </ul>
+                            </ul>
+                        </div>
+                        
+                    </div>
+                <div class="row padding40">
+                    <a href="{% url 'orders' %}" class="btn btn-outline-dark">Back to orders</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}
