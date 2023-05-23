@@ -176,7 +176,7 @@ def overview(request, instrument_name):
     date1 = datetime.strptime(pickup_date, "%m/%d/%Y").date()
     date2 = datetime.strptime(return_date, "%m/%d/%Y").date()
     Ndays = date2 - date1
-    days = Ndays.days
+    days = Ndays.days + 1
     instrumentObj = Product.objects.get(name=instrument_name)
     instrumentPrice = days * instrumentObj.price
 
@@ -320,7 +320,7 @@ def order_detail(request, order_id):
                 accessories_price = accessories_price + op.product.price
 
     Ndays = order.return_date - order.pickup_date
-    days = Ndays.days
+    days = Ndays.days + 1
     instrument_total_price = instrument_price * days
     totalPrice = instrument_total_price + accessories_price
 

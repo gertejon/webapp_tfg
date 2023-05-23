@@ -2,22 +2,11 @@
 
 {% block content %}
 
-<!-- --------------------- IN PROCESS PROMPT ---------------------- -->
-<!-- <div class="container">
-<h1>Página en Proceso</h1>
-<div class="alert alert-warning" role="alert">
-    Esta página está en proceso y estará disponible próximamente.
-</div>
-</div>
-<hr> -->
-<!-- -------------------------------------------------------------- -->
-
 
 <div class="container custom-size">
     
     <div class="row" >
         <div class="col-4">
-            
             <div class="row border">
                 <h1>{{ instrument.first.name }}</h1>
                 <div class="col paddingTop"> 
@@ -34,31 +23,6 @@
                     </ul>
                 </div>
             </div>
-            <!-- <div class="row">
-                <h3 class="paddingTop">Overview</h3>
-                <ul class="list-group list-group-flush">
-                    <ul class="list-group list-group-flush">
-                        <li class="list-group-item font-weight-bold">Dates</li>
-                            <li class="list-group-item">Pick-up Date: {{ pickup_date }}</li>
-                            <li class="list-group-item">Return Date: {{ return_date }}</li>
-                    </ul>
-                    <ul class="list-group list-group-flush">
-                        <li class="list-group-item font-weight-bold">Locations</li>
-                            <li class="list-group-item">Pick-up location: {{ pickup_loc }}</li>
-                            <li class="list-group-item">Return location: {{ return_loc }}</li>
-                    </ul>
-                    <ul class="list-group list-group-flush">
-                        <li class="list-group-item font-weight-bold">Accessories</li>
-                        {% for accessory in accessories %}
-                            <li class="list-group-item">{{ accessory }}</li>
-                        {% endfor %}
-                    </ul>
-                    <ul class="list-group list-group-flush">
-                        <li class="list-group-item font-weight-bold">Payment method</li>
-                            <li class="list-group-item">{{ payment_method }}</li>
-                    </ul>
-                </ul>
-            </div> -->
         </div>
         <div class="col-1"></div>
         <div class="col-7 paddingTop">
