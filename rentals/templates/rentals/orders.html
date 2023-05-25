@@ -3,14 +3,14 @@
 {% block content %}
 
 
-<div class="container">
+<div class="container custom-size">
     <div class="row paddingTop paddingBot">
         <h1>Your orders</h1>
     </div>
-    <div class="row paddingTop">
+    <div class="row paddingTop text-center">
         {% for order in user_orders %}
-            <div class="col">
-                <div class="card" style="width: 18rem;">
+            <div class="col text-center">
+                <div class="card cardDisplaying">
                     {% for OP in orderProducts %}
                         {% if OP.order == order %}
                             {% if OP.product.is_accessory == False %}

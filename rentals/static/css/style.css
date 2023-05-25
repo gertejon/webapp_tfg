@@ -4,7 +4,7 @@
 }
 
 .custom-size {
-    max-width: 1700px; 
+    max-width: 90% !important;
     margin-left: auto;
     margin-right: auto;
     padding-top: 20px;
@@ -44,4 +44,13 @@
 
 .payment-message{
     font-size: 15px;
+}
+
+.bigWidth {
+    max-width: 1700px;
+}
+
+.cardDisplaying {
+    display: inline-block !important;
+    width: 18rem !important;
 }

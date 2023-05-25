@@ -2,7 +2,7 @@
 
 
 {% block content %}
-<div class="custom-size container">
+<div class="custom-size container" style="max-width: 1700px;">
   <!-- TITLE -->
   <div class="row">
     <div class="col">
@@ -48,8 +48,8 @@
     <div class="col-8">
       <div class="row categories">
         {% for instrument in instruments %}
-            <div class="col">
-                <div class="card" style="width: 18rem;">
+            <div class="col text-center">
+                <div class="card cardDisplaying">
                     <img src="{{ instrument.image.url }}" class="card-img-top" alt="{{ instrument.name }}">
                     <div class="card-body text-center">
                         <h5 class="card-title">{{ instrument.name }}</h5>

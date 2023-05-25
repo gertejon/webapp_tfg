@@ -2,7 +2,6 @@
 
 {% block content %}
 
-
 <div class="container custom-size">
     <div class="row">
         <div class="col">
@@ -13,8 +12,8 @@
         <div class="col">
             <div class="row categories">
                 {% for type in types %}
-                    <div class="col">
-                        <div class="card" style="width: 18rem;">
+                    <div class="col text-center">
+                        <div class="card cardDisplaying">
                             <img src="{{ type.image.url }}" class="card-img-top" alt="{{ type.name }}">
                             <div class="card-body text-center">
                             <a href="{% url 'instruments' type.name %}" class="btn btn-outline-dark btn-lg w-100">{{ type.name }}</a>
@@ -24,9 +23,10 @@
                     
                 {% endfor %}
                 
-                <div class="col">
-                    <div class="card" style="width: 18rem;">
-                        <img src="#" class="card-img-top" alt="All {{ category.name }}">
+                <div class="col text-center">
+                    <div class="card cardDisplaying">
+                        {% load static %}
+                        <img src="{% static '/assets/img/guitars.jpg' %}" class="card-img-top" alt="All {{ category.name }}">
                         <div class="card-body text-center">
                         <a href="{% url 'instruments' category.name %}" class="btn btn-outline-dark btn-lg w-100">All {{ category.name }}</a>
                         </div>

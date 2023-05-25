@@ -4,7 +4,7 @@
 }
 
 .custom-size {
-    max-width: 1700px; 
+    max-width: 90% !important;
     margin-left: auto;
     margin-right: auto;
     padding-top: 20px;
@@ -28,4 +28,29 @@
 .bar-user-message {
     color: white;
     padding-right: 10px;
+}
+
+.paddingTop {
+    padding-top: 20px;
+}
+
+.paddingBot {
+    padding-bottom: 20px;
+}
+
+.padding40 {
+    padding-top: 40px;
+}
+
+.payment-message{
+    font-size: 15px;
+}
+
+.bigWidth {
+    max-width: 1700px;
+}
+
+.cardDisplaying {
+    display: inline-block !important;
+    width: 18rem !important;
 }
