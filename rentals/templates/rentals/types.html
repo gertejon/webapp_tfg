@@ -10,11 +10,13 @@
     </div>
     <div class="row">
         <div class="col">
-            <div class="row categories">
+            <div class="row categories vertical">
                 {% for type in types %}
-                    <div class="col text-center">
+                    <div class="col text-center centerize">
                         <div class="card cardDisplaying">
+                            {% if type.image %}
                             <img src="{{ type.image.url }}" class="card-img-top" alt="{{ type.name }}">
+                            {% endif %}
                             <div class="card-body text-center">
                             <a href="{% url 'instruments' type.name %}" class="btn btn-outline-dark btn-lg w-100">{{ type.name }}</a>
                             </div>
@@ -23,10 +25,15 @@
                     
                 {% endfor %}
                 
-                <div class="col text-center">
+                <div class="col text-center centerize">
                     <div class="card cardDisplaying">
                         {% load static %}
-                        <img src="{% static '/assets/img/guitars.jpg' %}" class="card-img-top" alt="All {{ category.name }}">
+                        {% if category.name == "Microphones" %}
+                            <img src="{% static '/assets/img/mic-hand.png' %}" class="card-img-top" alt="All {{ category.name }}">
+                        {% endif %}
+                        {% if category.name == "Guitars" %}
+                            <img src="{% static '/assets/img/guitars.jpg' %}" class="card-img-top" alt="All {{ category.name }}">
+                        {% endif %}
                         <div class="card-body text-center">
                         <a href="{% url 'instruments' category.name %}" class="btn btn-outline-dark btn-lg w-100">All {{ category.name }}</a>
                         </div>

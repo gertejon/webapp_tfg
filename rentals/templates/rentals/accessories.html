@@ -2,26 +2,22 @@
 
 {% block content %}
 
-<!-- --------------------- IN PROCESS PROMPT ---------------------- -->
-<!-- <div class="container">
-<h1>Página en Proceso</h1>
-<div class="alert alert-warning" role="alert">
-    Esta página está en proceso y estará disponible próximamente.
-</div>
-</div>
-<hr> -->
-<!-- -------------------------------------------------------------- -->
-
 <div class="container custom-size">
     
-    <div class="row" >
-        <div class="col-4">
-            
+    <div class="row flexColumn" >
+        <div class="col-4 wider">
+            <div class="only420">
+                <div class="progress">
+                    <div class="progress-bar" role="progressbar" style="width: 60%;" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100">3/5</div>
+                </div>
+            </div>
             <div class="row border">
-                <h1>{{ instrument.first.name }}</h1>
+                <h1 class="smaller">{{ instrument.first.name }}</h1>
                 <div class="col paddingTop"> 
                     <div class="card border-0" style="width: 9rem;">
+                        {% if instrument.first.image %}
                         <img src="{{ instrument.first.image.url }}" class="card-img-top" alt="{{ instrument.first.name }}">
+                        {% endif %}
                     </div>
                 </div>
                 <div class="col paddingTop">
@@ -34,25 +30,31 @@
                 </div>
             </div>
             <div class="row">
-                <h3 class="paddingTop">Overview</h3>
-                <ul class="list-group list-group-flush">
+                <div class="normalOverview">
+                    <h3 class="paddingTop">Overview</h3>
                     <ul class="list-group list-group-flush">
-                        <li class="list-group-item font-weight-bold">Dates</li>
-                            <li class="list-group-item">Pick-up Date: {{ pickup_date }}</li>
-                            <li class="list-group-item">Return Date: {{ return_date }}</li>
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item font-weight-bold">Locations</li>
+                                <li class="list-group-item">Pick-up location: {{ pickup_loc }}</li>
+                                <li class="list-group-item">Return location: {{ return_loc }}</li>
+                        </ul>
+                        <ul class="list-group list-group-flush">
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item font-weight-bold">Dates</li>
+                                    <li class="list-group-item">Pick-up Date: {{ pickup_date }}</li>
+                                    <li class="list-group-item">Return Date: {{ return_date }}</li>
+                            </ul>
+                        </ul>
                     </ul>
-                    <ul class="list-group list-group-flush">
-                        <li class="list-group-item font-weight-bold">Locations</li>
-                            <li class="list-group-item">Pick-up location: {{ pickup_loc }}</li>
-                            <li class="list-group-item">Return location: {{ return_loc }}</li>
-                    </ul>
-                </ul>
+                </div>
             </div>
         </div>
         <div class="col-1"></div>
-        <div class="col-7 paddingTop">
-            <div class="progress">
-                <div class="progress-bar" role="progressbar" style="width: 60%;" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100">3/5</div>
+        <div class="col-7 paddingTop wider">
+            <div class="hideAtLess730">
+                <div class="progress">
+                    <div class="progress-bar" role="progressbar" style="width: 60%;" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100">3/5</div>
+                </div>
             </div>
             <h1 class="padding40">Add Accessories</h1>
             <form method="GET" action="{% url 'payment' instrument.first.name %}">
@@ -73,6 +75,26 @@
                     <button type="submit" class="btn btn-outline-dark btn-lg">Select payment method</button>
                 </div>
             </form>
+            
+        </div>
+        <div class="row extraOverview">
+            <div class="col-12 wider">
+                <h3 class="paddingTop">Overview</h3>
+                <ul class="list-group list-group-flush">
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item font-weight-bold">Locations</li>
+                            <li class="list-group-item">Pick-up location: {{ pickup_loc }}</li>
+                            <li class="list-group-item">Return location: {{ return_loc }}</li>
+                    </ul>
+                    <ul class="list-group list-group-flush">
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item font-weight-bold">Dates</li>
+                                <li class="list-group-item">Pick-up Date: {{ pickup_date }}</li>
+                                <li class="list-group-item">Return Date: {{ return_date }}</li>
+                        </ul>
+                    </ul>
+                </ul>
+            </div>
             
         </div>
     </div>

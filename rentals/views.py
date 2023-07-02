@@ -4,7 +4,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.forms import UserChangeForm
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
-from .forms import SignUpForm
+from .forms import SignUpForm, AccountForm
 from categories.models import Category
 from product_types.models import Product_Type
 from products.models import Product
@@ -14,7 +14,11 @@ from payment_methods.models import PaymentMethod
 from orders.models import Order
 from orders.models import OrderProduct
 from urllib.parse import unquote
-from datetime import datetime
+from datetime import datetime, timedelta
+import json
+from django.contrib.auth.models import User
+from brands.models import Brand
+from django.core.exceptions import ObjectDoesNotExist
 
 
 ########################################################### Web content views ###########################################################
@@ -80,22 +84,59 @@ def instruments(request, type_name):
 
 ############################################################ order creation views ####################################################
 @login_required
-def rent(request, instrument_name):
+def dates(request, instrument_name):
+    # getting locations from url
+    pickup_loc = request.GET.get('pickup_loc', '')
+    return_loc = request.GET.get('pickup_loc', '')
+    # saving locations in session
+    request.session['pickup_loc'] = pickup_loc
+    request.session['return_loc'] = return_loc
+    
     # getting instrument tp render template
     instrument = Product.objects.filter(name=instrument_name)
-    # getting locations to check if the instrument can be rented
-    pickup_locations = Location.objects.filter(active=True, products__name=instrument_name, stock__units__gt=0).distinct()
 
-    return render(request, 'rentals/rent.html', {'instrument': instrument, 'pickup_locations': pickup_locations})
+    # getting orders that contain the instrument
+    inst = Product.objects.get(name=instrument_name)
+    orderProducts = OrderProduct.objects.filter(product=inst)
+    filteredOrders = []
+
+    try:
+        loc = Location.objects.get(name=pickup_loc)
+    except ObjectDoesNotExist:
+        return HttpResponse("Acces denied")
+    
+    for orderProduct in orderProducts:
+        order = orderProduct.order
+        if order.pickup_location == loc:
+            filteredOrders.append(order)
+    
+    # getting all the dates from the orders
+    disabled_dates = []
+    for order in filteredOrders:
+        iniDate = order.pickup_date
+        finDate = order.return_date
+        
+        while iniDate <= finDate:
+            dateName = iniDate.strftime('%m/%d/%Y')
+            disabled_dates.append(dateName)
+            iniDate += timedelta(days=1)
+    
+    for date in disabled_dates:
+        print(date)
+    print(disabled_dates)
+
+    disabled_dates_json = json.dumps(disabled_dates)
+
+    return render(request, 'rentals/dates.html', {
+        'instrument': instrument,
+        'pickup_loc': pickup_loc,
+        'return_loc': return_loc,
+        'disabled_dates': disabled_dates,
+        'disabled_dates_json': disabled_dates_json,
+    })
 
 @login_required
 def locations(request, instrument_name):
-    # getting dates from URL
-    pickup_date = request.GET.get('pickup_date')
-    return_date = request.GET.get('return_date')
-    # saving dates in session
-    request.session['pickup_date'] = pickup_date
-    request.session['return_date'] = return_date
     # getting locations to render template
     pickup_locations = Location.objects.filter(active=True, products__name=instrument_name, stock__units__gt=0).distinct()
     return_locations = Location.objects.filter(active=True)
@@ -105,9 +146,7 @@ def locations(request, instrument_name):
     return render(request, 'rentals/locations.html', {
         'instrument': instrument, 
         'pickup_locations': pickup_locations,
-        'return_locations': return_locations, 
-        'pickup_date': pickup_date,
-        'return_date': return_date,
+        'return_locations': return_locations,
     })
 
 @login_required
@@ -115,16 +154,23 @@ def accessories(request, instrument_name):
     # getting instrument to render template
     instrument = Product.objects.filter(name=instrument_name)
     # getting dates and locations from URL
-    pickup_date = request.session['pickup_date']
-    return_date = request.session['return_date']
-    pickup_loc = request.GET.get('pickup_loc')
-    return_loc = request.GET.get('return_loc')
-    # saving locations in session
-    request.session['pickup_loc'] = pickup_loc
-    request.session['return_loc'] = return_loc
+    try:
+        pickup_date = request.GET.get('pickup_date')
+        return_date = request.GET.get('return_date')
+        pickup_loc = request.session['pickup_loc']
+        return_loc = request.session['return_loc']
+    except:
+        return HttpResponse("Acces denied")
+    
+    # saving dates in session
+    request.session['pickup_date'] = pickup_date
+    request.session['return_date'] = return_date
     # getting instrument accessories
     instrumentName = Product.objects.filter(name=instrument_name).first()
     accessories = instrumentName.accessories.all()
+
+    if not pickup_date or not return_date or not pickup_loc:
+        return HttpResponse("Acces denied")
 
     return render(request, 'rentals/accessories.html', {
         'instrument': instrument,
@@ -148,6 +194,8 @@ def payment(request, instrument_name):
     accessories = request.GET.getlist('accessories')
     # saving accessories in session
     request.session['accessories'] = accessories
+
+
 
     return render(request, 'rentals/payment.html', {
         'instrument': instrument,
@@ -280,14 +328,30 @@ def signup(request):
 
 @login_required
 def account(request):
+    users = User.objects.all()
+    
+    if users:
+        usernames = []
+        emails = []
+        for user in users:
+            usernames.append(user.username)
+            emails.append(user.email)
+        usernames = json.dumps(usernames)
+        emails = json.dumps(emails)
     if request.method == 'POST':
-        form = UserChangeForm(request.POST, instance=request.user)
+        form = AccountForm(request.POST, instance=request.user)
         if form.is_valid():
             form.save()
             return redirect('account')
     else:
-        form = UserChangeForm(instance=request.user)
-    return render(request, 'rentals/account.html', {'form': form, 'user': request.user})
+        form = AccountForm(instance=request.user)
+    return render(request, 'rentals/account.html', {
+        'form': form, 
+        'user': request.user,
+        'users': users,
+        'usernames': usernames,
+        'emails': emails,
+    })
 
 @login_required
 def orders(request):
@@ -303,12 +367,17 @@ def orders(request):
 
     })
 
+@login_required
 def order_detail(request, order_id):
     order = Order.objects.get(id=order_id)
+    if order.user_id != request.user.id:
+        return HttpResponse("Acces denied")
     orderProducts = OrderProduct.objects.all()
     accessory_list = []
     accessories_price = 0
-
+    instrument_price = 0
+    instrument = None
+    userID = request.user.id
 
     for op in orderProducts:
         if op.order == order:

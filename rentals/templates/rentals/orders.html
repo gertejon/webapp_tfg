@@ -7,7 +7,7 @@
     <div class="row paddingTop paddingBot">
         <h1>Your orders</h1>
     </div>
-    <div class="row paddingTop text-center">
+    <div class="row paddingTop text-center" style="padding-bottom: 10%;">
         {% for order in user_orders %}
             <div class="col text-center">
                 <div class="card cardDisplaying">
@@ -15,7 +15,7 @@
                         {% if OP.order == order %}
                             {% if OP.product.is_accessory == False %}
                             <img src="{{ OP.product.image.url }}" class="card-img-top" alt="order">
-                            <div class="card-body text-center">
+                            <div class="card-body text-center smallerFont">
                                 <h5 class="card-title">{{ OP.product.name }}</h5>
                                 <p class="card-text">Order ID: {{ order.id }}</p>
                                 <p class="card-text">{{ order.pickup_date }} - {{ order.return_date }}</p>

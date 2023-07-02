@@ -27,6 +27,9 @@
               <a href="{% url 'signup' %}" class="btn btn-outline-dark">Signup instead</a>
             </div>
           </form>
+          {% if form.errors %}
+            <p class="alert alert-danger">Username or password are not correct</p>
+          {% endif %}
         </div>
       </div>
     </div>

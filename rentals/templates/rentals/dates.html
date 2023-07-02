@@ -1,0 +1,216 @@
+{% extends 'rentals/base.html' %}
+
+{% block content %}
+
+
+<div class="container custom-size">
+    
+    <div class="row flexColumn" >
+        <div class="col-4 wider">
+            <div class="only420">
+                <div class="progress">
+                    <div class="progress-bar" role="progressbar" style="width: 40%;" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100">2/5</div>
+                </div>
+            </div>
+            <div class="row border">
+                <h1 class="smaller">{{ instrument.first.name }}</h1>
+                <div class="col paddingTop"> 
+                    <div class="card border-0" style="width: 9rem;">
+                        {% if instrument.first.image %}
+                        <img src="{{ instrument.first.image.url }}" class="card-img-top" alt="{{ instrument.first.name }}">
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="col paddingTop">
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item font-weight-bold">Specs</li>
+                        {% for spec in instrument.first.specs %}
+                            <li class="list-group-item">{{ spec }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+            <div class="normalOverview">
+                <h3 class="paddingTop">Overview</h3>
+                <ul class="list-group list-group-flush">
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item font-weight-bold">Locations</li>
+                            <li class="list-group-item">Pick-up location: {{ pickup_loc }}</li>
+                            <li class="list-group-item">Return location: {{ return_loc }}</li>
+                    </ul>
+                </ul>
+            </div>
+        </div>
+        <div class="col-1"></div>
+        <div class="col-7 paddingTop wider">
+            <div class="hideAtLess730">
+                <div class="progress">
+                    <div class="progress-bar" role="progressbar" style="width: 40%;" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100">2/5</div>
+                </div>
+            </div>
+            <h1 class="padding40">Select Dates</h1>
+            <form method="GET" action="{% url 'accessories' instrument.first.name %}">
+                {% csrf_token %}
+                <div class="row paddingTop">
+                    <div class="col-5 dateSelector">
+                        <h5>Pick-up date</h5>
+                        <div class="input-group date" id="datepicker1">
+                            <input type="text" class="form-control" id="pickup_date" name="pickup_date">
+                            <span class="input-group-append">
+                                <span class="input-group-text bg-white">
+                                    <i class="fa fa-calendar"></i>
+                                </span>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="col-2"></div>
+                    <div class="col-5 dateSelector" >
+                        <h5>Return date</h5>
+                        <div class="input-group date" id="datepicker2">
+                            <input type="text" class="form-control" id="return_date" name="return_date">
+                            <span class="input-group-append">
+                                <span class="input-group-text bg-white">
+                                    <i class="fa fa-calendar"></i>
+                                </span>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row padding40">
+                    <button type="submit" class="btn btn-outline-dark btn-lg" onclick="return dateValidation()">View accessories</button>
+                </div>
+            </form>
+        </div>
+        <div class="row extraOverview">
+            <div class="col-12 wider">
+                <h3 class="paddingTop">Overview</h3>
+                <ul class="list-group list-group-flush">
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item font-weight-bold">Locations</li>
+                            <li class="list-group-item">Pick-up location: {{ pickup_loc }}</li>
+                            <li class="list-group-item">Return location: {{ return_loc }}</li>
+                    </ul>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(function() {
+        var disabled_dates = "{{ disabled_dates|safe }}";
+        var disabled_dates_json = JSON.parse('{{ disabled_dates_json|safe }}');
+        console.log("disabled_dates (javascript):", disabled_dates);
+        console.log("disabled_dates_json (javascript):", disabled_dates_json);
+
+        $('#datepicker1').datepicker({
+            startDate: new Date(),
+            clearBtn: true,
+            daysOfWeekDisabled: [0],
+            datesDisabled: disabled_dates,
+            todayHighlight: true,
+            autoclose: true
+        }).on('changeDate', function(e){
+            $('#datepicker2').datepicker('setDate', null);
+            $('#datepicker2').datepicker('remove', 'endDate');
+            var aux_date = new Date();
+            var changed = false;
+            console.log(e.date);
+            selectedDate = e.date;
+            var formatSelectedDate = (e.date.getMonth() + 1) + '/' + e.date.getDate() + '/' + e.date.getFullYear();
+            console.log(formatSelectedDate);
+
+            var check_date = (aux_date.getMonth() + 1) + '/' + aux_date.getDate() + '/' + aux_date.getFullYear();
+            console.log("formatSelectedDate:", formatSelectedDate);
+            console.log("check_date:", check_date);
+            if (formatSelectedDate > check_date) {
+                console.log("SE PUEDE COMPARAR");
+            }
+
+            var maxDate = new Date(Math.max.apply(null, disabled_dates_json.map(function(date) {
+                return new Date(date);
+            })));
+            formatMaxDate = (maxDate.getMonth() + 1) + '/' + maxDate.getDate() + '/' + maxDate.getFullYear();
+            console.log('maxDate:', maxDate);
+
+            console.log("formatSelectedDate:", formatSelectedDate);
+            console.log("formatMaxDate", formatMaxDate);
+
+            if (e.date < maxDate) {
+                while (!changed) {
+                    console.log("entra while");
+                    var check_date = (String(aux_date.getMonth() + 1).padStart(2, '0')) + '/' + (String(aux_date.getDate()).padStart(2, '0')) + '/' + aux_date.getFullYear();
+                    console.log("checkDate:", check_date)
+                    if (disabled_dates.includes(check_date)) {
+                        console.log("entra if check_date");
+                        console.log("formatSelectedDate:", formatSelectedDate);
+                        if (aux_date > e.date) {
+                            console.log("entra if formatSelectedDate");
+                            aux_date.setDate(aux_date.getDate() - 1);
+                            $('#datepicker2').datepicker('setEndDate', aux_date);
+                            changed = true;
+
+                        }
+                        else {
+                            console.log("esta fecha no cuenta");
+                            aux_date.setDate(aux_date.getDate() + 1);
+                        }
+                        
+                    }
+                    else {
+                        console.log("entra else");
+                        aux_date.setDate(aux_date.getDate() + 1);
+                    }
+                }
+            }
+            
+            $('#datepicker2').datepicker('setStartDate', e.date);
+            $('#datepicker2').datepicker('setDaysOfWeekDisabled', [0]);
+            $('#datepicker2').focus();
+        });
+        $('#datepicker2').datepicker({
+            startDate: new Date(),
+            clearBtn: true,
+            daysOfWeekDisabled: [0, 1, 2, 3, 4, 5, 6],
+            todayHighlight: true,
+            autoclose: true
+        });
+    });
+</script>
+
+<script type="text/javascript">
+    function dateValidation() {
+        // process pickup date
+        var pickup_date_str = document.getElementById('pickup_date').value;
+        var pickup_date_mdy = pickup_date_str.split('/');
+        var pickup_date = new Date(pickup_date_mdy[2], pickup_date_mdy[0] - 1, pickup_date_mdy[1]); // y/m/d
+        // process return date
+        var return_date_str = document.getElementById('return_date').value;
+        var return_date_mdy = return_date_str.split('/');
+        var return_date = new Date(return_date_mdy[2], return_date_mdy[0] - 1, return_date_mdy[1]);
+        // validate return after pickup
+        if (return_date <= pickup_date) {
+            alert('Pick-up date cannot be greater than return date. Please, select dates again.');
+            return false;
+        }
+        // validate dates are not in the past
+        var current_date = new Date();
+        var day = current_date.getDate();
+        var month = current_date.getMonth() + 1;
+        var year = current_date.getFullYear();
+        var current_date_formatted = new Date();
+        if (current_date > pickup_date) {
+            alert('Dates cannot take place in the past. Current date is ' + month + "/" + day + "/" + year + "(mm/dd/yyyy)");
+            return false;
+        }
+        // validating filled dates
+        if (return_date_str == '' || pickup_date_str == '') {
+            alert('All dates must be filled');
+            return false;
+        }
+
+        return true;
+    }
+</script>
+
+{% endblock %}

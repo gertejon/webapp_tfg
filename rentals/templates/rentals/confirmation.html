@@ -4,7 +4,7 @@
 
 
 <div class="container">
-    <div class="row">
+    <div class="row" style="padding-top: 4%;">
         <h1>Thanks for your order, {{ user.username }}</h1>
     </div>
     <div class="row">
@@ -20,11 +20,11 @@
         {% endif %}
     </div>
     <div class="row padding40">
-        <div class="col text-center">
-            <a href="{% url 'home' %}" class="btn btn-outline-dark btn-lg">Back to homepage</a>
+        <div class="col text-center smallerFont">
+            <a href="{% url 'home' %}" class="btn btn-outline-dark btn-lg smallerFont">Back to homepage</a>
         </div>
-        <dic class="col text-center">
-            <a href="{% url 'order_detail' order.id %}" class="btn btn-outline-dark btn-lg">View order</a>
+        <dic class="col text-center smallerFont" style="justify-content: flex-start; display: flex;">
+            <a href="{% url 'order_detail' order.id %}" class="btn btn-outline-dark btn-lg smallerFont">View order</a>
         </dic>
     </div>
 </div>

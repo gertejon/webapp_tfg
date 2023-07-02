@@ -4,7 +4,6 @@ from categories.models import Category
 from product_types.models import Product_Type
 from brands.models import Brand
 
-# admin.site.register(Product)
 
 class ProductAdmin(admin.ModelAdmin):
 

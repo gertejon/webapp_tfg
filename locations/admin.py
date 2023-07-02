@@ -10,4 +10,3 @@ class LocationAdmin(admin.ModelAdmin):
     inlines = [StockInline]
 
 admin.site.register(Location, LocationAdmin)
-# admin.site.register(Stock)

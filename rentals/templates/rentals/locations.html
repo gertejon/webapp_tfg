@@ -2,26 +2,23 @@
 
 {% block content %}
 
-<!-- --------------------- IN PROCESS PROMPT ---------------------- -->
-<!-- <div class="container">
-<h1>Página en Proceso</h1>
-<div class="alert alert-warning" role="alert">
-    Esta página está en proceso y estará disponible próximamente.
-</div>
-</div>
-<hr> -->
-<!-- -------------------------------------------------------------- -->
 
 <div class="container custom-size">
     
-    <div class="row" >
-        <div class="col-4">
-            
+    <div class="row flexColumn" >
+        <div class="col-4 wider">
+            <div class="only420">
+                <div class="progress">
+                    <div class="progress-bar" role="progressbar" style="width: 20%;" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100">1/5</div>
+                </div>
+            </div>
             <div class="row border">
-                <h1>{{ instrument.first.name }}</h1>
+                <h1 class="smaller">{{ instrument.first.name }}</h1>
                 <div class="col paddingTop"> 
                     <div class="card border-0" style="width: 9rem;">
+                        {% if instrument.first.image %}
                         <img src="{{ instrument.first.image.url }}" class="card-img-top" alt="{{ instrument.first.name }}">
+                        {% endif %}
                     </div>
                 </div>
                 <div class="col paddingTop">
@@ -33,30 +30,25 @@
                     </ul>
                 </div>
             </div>
-            <div class="row">
-                <h3 class="paddingTop">Overview</h3>
-                <ul class="list-group list-group-flush">
-                    <ul class="list-group list-group-flush">
-                        <li class="list-group-item font-weight-bold">Dates</li>
-                            <li class="list-group-item">Pick-up Date: {{ pickup_date }}</li>
-                            <li class="list-group-item">Return Date: {{ return_date }}</li>
-                    </ul>
-                </ul>
-            </div>
         </div>
         <div class="col-1"></div>
-        <div class="col-7 paddingTop">
-            <div class="progress">
-                <div class="progress-bar" role="progressbar" style="width: 40%;" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100">2/5</div>
+        <div class="col-7 paddingTop wider">
+            <div class="hideAtLess730">
+                <div class="progress">
+                    <div class="progress-bar" role="progressbar" style="width: 20%;" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100">1/5</div>
+                </div>
             </div>
             <h1 class="padding40">Select Locations</h1>
-            <form method="GET" action="{% url 'accessories' instrument.first.name %}">
+            {% if not pickup_locations %}
+            <p class="text-danger paddingTop">This instrument is not available to rent in any location</p>
+            {% else %}
+            <form method="GET" action="{% url 'dates' instrument.first.name %}">
                 {% csrf_token %}
                 <div class="row paddingTop">
                     <div class="col-5">
                         <div class="form-group">
-                            <h5>Pick-up location</h5>
-                            <select class="form-control" id="brand" name="pickup_loc">
+                            <h5>Pick-up and return location</h5>
+                            <select class="form-control" id="brand" name="pickup_loc" name="return_loc">
                               {% for location in pickup_locations %}
                               <option value="{{ location }}">{{ location }}</option>
                               {% endfor %}
@@ -66,20 +58,20 @@
                     <div class="col-2"></div>
                     <div class="col-5" >
                         <div class="form-group">
-                            <h5>Return location</h5>
+                            <!-- <h5>Return location</h5>
                             <select class="form-control" id="brand" name="return_loc">
                               {% for location in return_locations %}
                               <option value="{{ location }}">{{ location }}</option>
                               {% endfor %}
-                            </select>
+                            </select> -->
                         </div>
                     </div>
                 </div>
                 <div class="row padding40">
-                    <button type="submit" class="btn btn-outline-dark btn-lg">View accessories</button>
+                    <button type="submit" class="btn btn-outline-dark btn-lg">View available dates</button>
                 </div>
             </form>
-            
+            {% endif %}
         </div>
     </div>
 </div>

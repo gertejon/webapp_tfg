@@ -10,8 +10,8 @@
     </div>
   </div>
   <!-- FILTERS -->
-  <div class="row">
-    <div class="col-2">
+  <div class="row contentLayout">
+    <div class="col-2 wider">
       <form id="instrumentFilter">
         <h3>Filters</h3>
         <div class="form-group filter-field">
@@ -44,19 +44,36 @@
         <button type="submit" class="btn btn-outline-dark">Apply</button>
       </form>
     </div>
+    <div class="extraSort">
+      <div class="col-2 wider">
+        <div class="col-2">
+          <h3>Sort Products</h3>
+          <form id="sort-form" method="GET" action="">
+            <div class="form-group paddingTop">
+              <div class="btn-group" role="group" aria-label="Sort products" style="width: 123px;">
+                <button type="submit" class="btn btn-outline-dark" name="sort" value="AZ">A-Z</button>
+                <button type="submit" class="btn btn-outline-dark" name="sort" value="ZA">Z-A</button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
     <!-- INSTRUMENTS -->
-    <div class="col-8">
-      <div class="row categories">
+    <div class="col-8 instruments">
+      <div class="row categories vertical">
         {% for instrument in instruments %}
-            <div class="col text-center">
+            <div class="col text-center centerize">
                 <div class="card cardDisplaying">
+                    {% if instrument.image %}
                     <img src="{{ instrument.image.url }}" class="card-img-top" alt="{{ instrument.name }}">
-                    <div class="card-body text-center">
+                    {% endif %}
+                    <div class="card-body text-center centerize">
                         <h5 class="card-title">{{ instrument.name }}</h5>
                         {% for spec in instrument.specs %}
                           <p class="card-text">{{ spec }}</p>
                         {% endfor %}
-                        <a href="{% url 'rent' instrument.name %}" class="btn btn-outline-dark w-100">Rent for {{ instrument.price }}€/day</a>
+                        <a href="{% url 'locations' instrument.name %}" class="btn btn-outline-dark w-100">Rent for {{ instrument.price }}€/day</a>
                     </div>
                 </div>
             </div>
@@ -65,7 +82,7 @@
       </div>
     </div>
     <!-- SORTING BOX -->
-    <div class="col-2">
+    <div class="col-2 regularSortBox">
       <h3>Sort Products</h3>
       <form id="sort-form" method="GET" action="">
         <div class="form-group paddingTop">

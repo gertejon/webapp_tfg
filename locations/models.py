@@ -12,7 +12,6 @@ class Stock(models.Model):
             return f"{self.location.name}_{self.product.name}"
 
 class Location(models.Model):
-    # id = models.IntegerField(primary_key=True)
     name = models.CharField(max_length=100, unique=True)
     active = models.BooleanField(default=True)
     products = models.ManyToManyField(Product, through="Stock")
